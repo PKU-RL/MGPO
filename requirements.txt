@@ -1,0 +1,16 @@
+anytree==2.12.1
+gym==0.26.2
+gymnasium==0.29.1
+gymnasium-robotics==1.2.4
+imageio==2.35.1
+matplotlib==3.5.1
+mujoco==2.3.7
+mujoco-py==2.1.2.14
+numpy==1.23.5
+scipy==1.10.1
+torch==1.12.1
+torchaudio==0.12.1
+torchvision==0.13.1
+tqdm==4.67.0
+transformers==4.5.1
+wandb==0.9.1
