@@ -10,14 +10,15 @@ Previous works in skill pre-training utilize offline, task-agnostic dataset to a
 - Create a conda environment with `python==3.8.5`. Install python packages in `requirements.txt`.
 - For the Crafter environment, `pip install crafter==1.8.3` or see the [repo](https://github.com/danijar/crafter).
 - Download datasets from [this link](https://disk.pku.edu.cn/link/AA5B51257BE60D45668EA68A764BF3E00A). For the Crafter dataset, merge the two zipped files with `cat crafter_dataset_part_* > crafter_dataset.tar.gz`, then unzip the output `crafter_dataset.tar.gz`. Place them in the `dataset/` folder as follows:
-
+```
 dataset/
 ├── kitchen_t500_test.pkl/
-└── kitchen_t500_train.pkl/
-└── xxxxxx.pkl
-└── crafter_dataset/
+├── kitchen_t500_train.pkl/
+├── xxxxxx.pkl
+├── crafter_dataset/
 │   ├── 0.pkl
-│   └── xxx.pkl
+│   ├── xxx.pkl
+```
 
 
 ## Offline Pre-Training
