@@ -2,7 +2,7 @@
 
 Official implementation of **[NeurIPS 2024]** [Pre-Trained Multi-Goal Transformers with Prompt Optimization for Efficient Online Adaptation](https://openreview.net/forum?id=DHucngOEe3).
 
-![](figs/mgpo.png)
+![](fig/mgpo.png)
 
 Previous works in skill pre-training utilize offline, task-agnostic dataset to accelerate RL. However, these approaches still require substantial RL steps to learn a new task. We propose MGPO, a method that leverages the power of Transformer-based policies to model sequences of goals during offline pre-training, enabling efficient online adaptation through prompt optimization.
 
