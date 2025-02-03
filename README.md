@@ -12,12 +12,12 @@ Previous works in skill pre-training utilize offline, task-agnostic dataset to a
 - Download datasets from [this link](https://disk.pku.edu.cn/link/AA5B51257BE60D45668EA68A764BF3E00A). For the Crafter dataset, merge the two zipped files with `cat crafter_dataset_part_* > crafter_dataset.tar.gz`, then unzip the output `crafter_dataset.tar.gz`. Place them in the `dataset/` folder as follows:
 
 dataset/
-  ├── kitchen_t500_test.pkl/
-  ├── kitchen_t500_train.pkl/
-  ├── xxxxxx.pkl
-  ├── crafter_dataset/
-  │   ├── 0.pkl
-  │   ├── xxx.pkl
+├── kitchen_t500_test.pkl/
+└── kitchen_t500_train.pkl/
+└── xxxxxx.pkl
+└── crafter_dataset/
+│   ├── 0.pkl
+│   └── xxx.pkl
 
 
 ## Offline Pre-Training
@@ -28,7 +28,7 @@ Training scripts for all environments are listed in `train.sh`. Checkpoints are 
 ## Online Adaptation with Prompt Optimization
 Test the policy on MazeRunner-15 using MGPO-UCB as an example: run `python prompt_tuning_ucb.py --env mazerunner --dataset_path 'dataset/mazerunner-d15-g4-4-t64-multigoal-astar.pkl' --max_prompt_len 5 --K 64 --max_ep_len 64 --load-path 'model_saved/gym-experiment-xxx/prompt_model_mazerunner_iter_4999' --task -1 --max_test_episode 100`, where `--load-path` is the model checkpoint dir.
 
-Test scripts for all environments with MGPO-Random, MGPO-UCB, and MGPO-BPE are listed in `test.sh`. Results are saved in `eval_results/`.
+Test scripts for all environments with MGPO-explore, MGPO-UCB, and MGPO-BPE are listed in `test.sh`. Results are saved in `eval_results/`.
 
 
 ## Using Your Own Environment & Dataset
