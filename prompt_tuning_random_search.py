@@ -102,7 +102,7 @@ def test(variant):
     )
     model = model.to(device=device)
 
-    model.load_state_dict(torch.load(args.load_path), strict=True)
+    model.load_state_dict(torch.load(args.load_path, map_location=device), strict=True)
     print('model initialized from: ', args.load_path)
     #print(model)
 
@@ -122,14 +122,6 @@ def test(variant):
         plt.legend()
         plt.savefig('{}_return.png'.format(args.env))
 
-        initial_prompt = prompt_to_torch(env.get_task_prompt(), variant['max_prompt_len'], device)
-        _,_,_, ep_data = online_collect_episode(env, model, variant['max_ep_len'], device, initial_prompt, render=True)
-        rgbs = ep_data['rgbs']
-        imageio.mimsave('{}_initial_prompt.gif'.format(args.env), rgbs, 'GIF', duration=0.03)
-        _,_,_,ep_data = online_collect_episode(env, model, variant['max_ep_len'], device, best_prompt, render=True)
-        rgbs = ep_data['rgbs']
-        imageio.mimsave('{}_optimized_prompt.gif'.format(args.env), rgbs, 'GIF', duration=0.03)
-
     # evaluate on all test tasks
     else:
         save_dir = os.path.join(args.save_dir, args.env)
@@ -139,17 +131,17 @@ def test(variant):
 
         data_save = []
         ep_returns, ep_best_returns = np.zeros(args.max_test_episode), np.zeros(args.max_test_episode)
-        for i in trange(len(test_env_list)):
+        for i in range(len(test_env_list)):
             env = test_env_list[i]
             best_prompts, rets, best_rets = random_prompt_search(env, model, variant, device)
             ep_returns += np.asarray(rets)
             ep_best_returns += np.asarray(best_rets)
             data_save.append({'ep_returns': ep_returns, 'prompts': best_prompts, 'prompts_performance': best_rets})
+            print('task {} initial_prompt_ret {} optimized_prompt_ret {}'.format(i, best_rets[0], best_rets[-1]))
 
         x = np.arange(0, len(ep_returns))
         plt.xlabel('test episode')
         plt.ylabel('return')
-        plt.plot(x, ep_returns/len(test_env_list), label='return', c='b')
         plt.plot(x, ep_best_returns/len(test_env_list), label='best return', c='r')
         if hasattr(CONFIG_DICT[args.env], 'get_oracle_returns'):
             oracle_return = np.mean(CONFIG_DICT[args.env].get_oracle_returns(test_trajectories_list))

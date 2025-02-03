@@ -9,6 +9,7 @@ import sys, os
 import time
 import itertools
 from datetime import datetime
+from tqdm import trange
 
 from prompt_dt.prompt_decision_transformer import GoalTransformer
 from prompt_dt.prompt_seq_trainer import PromptSequenceTrainer
@@ -141,7 +142,7 @@ def experiment(
         '''
         model_post_fix = ''
         
-        for iter in range(variant['max_iters']):
+        for iter in trange(variant['max_iters']):
             # train for many batches
             outputs = trainer.train(
                 num_steps=variant['num_steps_per_iter'], 

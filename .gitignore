@@ -2,3 +2,6 @@ __pycache__/
 *.pkl
 wandb/
 model_saved/
+eval_results/
+dataset/
+!dataset/README.md

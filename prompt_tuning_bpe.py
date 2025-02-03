@@ -116,7 +116,7 @@ def pto_prompt_search(env, model, variant, device):
         pto.update(i_prompt, ret) # update the arm
         if variant['task']!=-1:
             print('ret: {}, best ret: {}, best arm performance: {}'.format(ret, max_ep_ret, pto.get_arm_best_determ_return()['r_determ']))
-            pto.print()
+            #pto.print()
             #env.print_episode_stats(prompt)
         if ret >= max_ep_ret:
             max_ep_ret = ret
@@ -181,7 +181,7 @@ def test(variant):
     )
     model = model.to(device=device)
 
-    model.load_state_dict(torch.load(args.load_path), strict=True)
+    model.load_state_dict(torch.load(args.load_path, map_location=device), strict=True)
     print('model initialized from: ', args.load_path)
     #print(model)
 
@@ -201,14 +201,6 @@ def test(variant):
         plt.legend()
         plt.savefig('{}_return.png'.format(args.env))
 
-        initial_prompt = prompt_to_torch(env.get_task_prompt(), variant['max_prompt_len'], device)
-        _,_,_, ep_data = online_collect_episode(env, model, variant['max_ep_len'], device, initial_prompt, render=True)
-        rgbs = ep_data['rgbs']
-        imageio.mimsave('{}_initial_prompt.gif'.format(args.env), rgbs, 'GIF', duration=0.03)
-        _,_,_,ep_data = online_collect_episode(env, model, variant['max_ep_len'], device, best_prompt, render=True)
-        rgbs = ep_data['rgbs']
-        imageio.mimsave('{}_optimized_prompt.gif'.format(args.env), rgbs, 'GIF', duration=0.03)
-
     # evaluate on all test tasks
     else:
         save_dir = os.path.join(args.save_dir, args.env)
@@ -218,17 +210,17 @@ def test(variant):
 
         data_save = []
         ep_returns, ep_best_returns = np.zeros(args.max_test_episode), np.zeros(args.max_test_episode)
-        for i in trange(len(test_env_list)):
+        for i in range(len(test_env_list)):
             env = test_env_list[i]
             best_prompts, rets, best_rets = pto_prompt_search(env, model, variant, device)
             ep_returns += np.asarray(rets)
             ep_best_returns += np.asarray(best_rets)
             data_save.append({'ep_returns': ep_returns, 'prompts': best_prompts, 'prompts_performance': best_rets})
+            print('task {} initial_prompt_ret {} optimized_prompt_ret {}'.format(i, best_rets[0], best_rets[-1]))
 
         x = np.arange(0, len(ep_returns))
         plt.xlabel('test episode')
         plt.ylabel('return')
-        plt.plot(x, ep_returns/len(test_env_list), label='return', c='b')
         plt.plot(x, ep_best_returns/len(test_env_list), label='best return', c='r')
         if hasattr(CONFIG_DICT[args.env], 'get_oracle_returns'):
             oracle_return = np.mean(CONFIG_DICT[args.env].get_oracle_returns(test_trajectories_list))
@@ -244,7 +236,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--env', type=str, default='mazerunner') 
     parser.add_argument('--dataset_path', type=str, default='envs/mazerunner/mazerunner-d15-g4-4-t64-multigoal-astar.pkl')
-    parser.add_argument('--fig_prefix', type=str, default='pto-prior') # save fig prefix 
+    parser.add_argument('--fig_prefix', type=str, default='bpe') # save fig prefix 
     parser.add_argument('--seed', type=int, default=1)
     #parser.add_argument('--test_optimal_prompt', action='store_true', default=False) # use 'optimal_prompts' saved in trajectories for test?
     parser.add_argument('--task', type=int, default=-1) # test task index, -1 means all tasks
